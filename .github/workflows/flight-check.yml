@@ -28,4 +28,4 @@ jobs:
           TRAVELPAYOUTS_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
           PRICE_LIMIT: "25000"
           CHECK_MINUTES: "15"
-        run: python бот.py
+        run: python bot.py
