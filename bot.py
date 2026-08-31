@@ -12,6 +12,7 @@ load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
 TRAVEL_TOKEN = os.getenv("TRAVELPAYOUTS_TOKEN")
 
 PRICE_LIMIT = int(os.getenv("PRICE_LIMIT", "25000"))
@@ -33,16 +34,22 @@ STATE_FILE = Path("seen_prices.json")
 def send_telegram(text):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
 
-    response = requests.post(
-        url,
-        json={
-            "chat_id": CHAT_ID,
-            "text": text,
-        },
-        timeout=60,
-    )
+    targets = [CHAT_ID, TELEGRAM_CHANNEL_ID]
 
-    response.raise_for_status()
+    for chat_id in targets:
+        if not chat_id:
+            continue
+
+        response = requests.post(
+            url,
+            json={
+                "chat_id": chat_id,
+                "text": text,
+            },
+            timeout=60,
+        )
+
+        response.raise_for_status()
 
 
 def load_state():
