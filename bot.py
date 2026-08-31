@@ -259,12 +259,7 @@ def check_all():
 
 
 if __name__ == "__main__":
-    limit_text = f"{PRICE_LIMIT:,}".replace(",", " ")
 
-    send_telegram(
-        "✅ Монитор авиабилетов запущен.\n\n"
-        "Направление: Нячанг (CXR)\n"
-        f"Порог уведомления: {limit_text} ₽"
-    )
+    
 
     check_all()
