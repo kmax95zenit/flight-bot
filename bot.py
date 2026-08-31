@@ -266,7 +266,7 @@ def check_all():
 
 
 if __name__ == "__main__":
-send_telegram("✅ ТЕСТ: уведомления работают")
+    send_telegram("✅ ТЕСТ: уведомления работают")
     
 
     check_all()
