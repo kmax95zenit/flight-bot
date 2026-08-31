@@ -267,6 +267,4 @@ if __name__ == "__main__":
         f"Порог уведомления: {limit_text} ₽"
     )
 
-    while True:
-        check_all()
-        time.sleep(CHECK_MINUTES * 60)
+       check_all()
