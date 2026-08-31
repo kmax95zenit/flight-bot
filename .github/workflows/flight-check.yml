@@ -30,11 +30,11 @@ jobs:
           PRICE_LIMIT: "25000"
           CHECK_MINUTES: "15"
         run: python bot.py
-      - name: Check Antalya
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
-          TRAVELPAYOUTS_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
-        run: python antalya.py
+#      - name: Check Antalya
+#        env:
+#            TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+#            TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+#            TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+#            TRAVELPAYOUTS_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
+#        run: python antalya.py
      
