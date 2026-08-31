@@ -267,4 +267,4 @@ if __name__ == "__main__":
         f"Порог уведомления: {limit_text} ₽"
     )
 
-       check_all()
+    check_all()
