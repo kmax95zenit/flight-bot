@@ -70,7 +70,8 @@ def search_flights():
 
         if not departure or departure < today:
             continue
-
+        if departure < "2026-09-19" or departure > "2026-09-23":
+            continue
         if transfers != 0:
             continue
 
