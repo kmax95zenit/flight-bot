@@ -1,6 +1,5 @@
 import os
 import requests
-from datetime import date
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,9 +9,16 @@ CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
 TRAVEL_TOKEN = os.getenv("TRAVELPAYOUTS_TOKEN")
 
-ORIGIN = "PEE"
 DESTINATION = "AYT"
 PRICE_LIMIT = 7000
+
+DATE_FROM = "2026-09-19"
+DATE_TO = "2026-09-23"
+
+ORIGINS = {
+    "PEE": "Пермь",
+    "SVX": "Екатеринбург",
+}
 
 
 def send_telegram(text):
@@ -36,11 +42,11 @@ def send_telegram(text):
         response.raise_for_status()
 
 
-def search_flights():
+def search_city(origin, city):
     url = "https://api.travelpayouts.com/aviasales/v3/search_by_price_range"
 
     params = {
-        "origin": ORIGIN,
+        "origin": origin,
         "destination": DESTINATION,
         "value_min": 1,
         "value_max": 20000,
@@ -59,8 +65,6 @@ def search_flights():
 
     data = response.json().get("data", [])
 
-    today = date.today().isoformat()
-
     suitable = []
 
     for ticket in data:
@@ -68,10 +72,12 @@ def search_flights():
         price = ticket.get("price")
         transfers = ticket.get("transfers")
 
-        if not departure or departure < today:
+        if not departure:
             continue
-        if departure < "2026-09-19" or departure > "2026-09-23":
+
+        if departure < DATE_FROM or departure > DATE_TO:
             continue
+
         if transfers != 0:
             continue
 
@@ -81,7 +87,10 @@ def search_flights():
         suitable.append(ticket)
 
     if not suitable:
-        print("Пермь → Анталья: прямых вариантов до 7 000 ₽ нет")
+        print(
+            f"{city} → Анталья: прямых вариантов "
+            f"{DATE_FROM}–{DATE_TO} до 7 000 ₽ нет"
+        )
         return
 
     suitable.sort(key=lambda x: x.get("price", 999999))
@@ -92,7 +101,7 @@ def search_flights():
 
         text = (
             "🔥 ДЕШЁВЫЙ ПРЯМОЙ РЕЙС 🔥\n\n"
-            "Пермь → Анталья\n"
+            f"{city} → Анталья\n"
             f"Цена: {price:,} ₽\n"
             f"Дата: {departure}\n"
             "Пересадок: 0"
@@ -101,9 +110,14 @@ def search_flights():
         send_telegram(text)
 
         print(
-            f"Найден билет: Пермь → Анталья | "
+            f"Найден билет: {city} → Анталья | "
             f"{price} ₽ | {departure} | прямой"
         )
+
+
+def search_flights():
+    for origin, city in ORIGINS.items():
+        search_city(origin, city)
 
 
 if __name__ == "__main__":
