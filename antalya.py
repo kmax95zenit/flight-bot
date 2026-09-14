@@ -10,14 +10,19 @@ TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
 TRAVEL_TOKEN = os.getenv("TRAVELPAYOUTS_TOKEN")
 
 DESTINATION = "AYT"
-PRICE_LIMIT = 7000
 
 DATE_FROM = "2026-09-19"
 DATE_TO = "2026-09-23"
 
 ORIGINS = {
-    "PEE": "Пермь",
-    "SVX": "Екатеринбург",
+    "PEE": {
+        "city": "Пермь",
+        "price_limit": 10000,
+    },
+    "SVX": {
+        "city": "Екатеринбург",
+        "price_limit": 7000,
+    },
 }
 
 
@@ -42,7 +47,7 @@ def send_telegram(text):
         response.raise_for_status()
 
 
-def search_city(origin, city):
+def search_city(origin, city, price_limit):
     url = "https://api.travelpayouts.com/aviasales/v3/search_by_price_range"
 
     params = {
@@ -81,7 +86,7 @@ def search_city(origin, city):
         if transfers != 0:
             continue
 
-        if price is None or price > PRICE_LIMIT:
+        if price is None or price > price_limit:
             continue
 
         suitable.append(ticket)
@@ -89,7 +94,7 @@ def search_city(origin, city):
     if not suitable:
         print(
             f"{city} → Анталья: прямых вариантов "
-            f"{DATE_FROM}–{DATE_TO} до 7 000 ₽ нет"
+            f"{DATE_FROM}–{DATE_TO} до {price_limit:,} ₽ нет"
         )
         return
 
@@ -116,8 +121,12 @@ def search_city(origin, city):
 
 
 def search_flights():
-    for origin, city in ORIGINS.items():
-        search_city(origin, city)
+    for origin, settings in ORIGINS.items():
+        search_city(
+            origin,
+            settings["city"],
+            settings["price_limit"],
+        )
 
 
 if __name__ == "__main__":
