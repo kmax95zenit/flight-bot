@@ -17,11 +17,11 @@ DATE_TO = "2026-09-23"
 ORIGINS = {
     "PEE": {
         "city": "Пермь",
-        "price_limit": 10000,
+        "price_limit": 12000,
     },
     "SVX": {
         "city": "Екатеринбург",
-        "price_limit": 7000,
+        "price_limit": 12000,
     },
 }
 
