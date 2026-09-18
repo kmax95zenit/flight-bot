@@ -17,11 +17,13 @@ DATE_TO = "2026-09-23"
 ORIGINS = {
     "PEE": {
         "city": "Пермь",
-        "price_limit": 12000,
+        "price_limit_per_person": 12500,
+        "price_limit_for_two": 25000,
     },
     "SVX": {
         "city": "Екатеринбург",
-        "price_limit": 12000,
+        "price_limit_per_person": 10000,
+        "price_limit_for_two": 20000,
     },
 }
 
@@ -47,7 +49,7 @@ def send_telegram(text):
         response.raise_for_status()
 
 
-def search_city(origin, city, price_limit):
+def search_city(origin, city, price_limit_per_person, price_limit_for_two):
     url = "https://api.travelpayouts.com/aviasales/v3/search_by_price_range"
 
     params = {
@@ -86,7 +88,7 @@ def search_city(origin, city, price_limit):
         if transfers != 0:
             continue
 
-        if price is None or price > price_limit:
+        if price is None or price > price_limit_per_person:
             continue
 
         suitable.append(ticket)
@@ -94,20 +96,22 @@ def search_city(origin, city, price_limit):
     if not suitable:
         print(
             f"{city} → Анталья: прямых вариантов "
-            f"{DATE_FROM}–{DATE_TO} до {price_limit:,} ₽ нет"
+            f"{DATE_FROM}–{DATE_TO} до {price_limit_for_two:,} ₽ на двоих нет"
         )
         return
 
     suitable.sort(key=lambda x: x.get("price", 999999))
 
     for ticket in suitable[:5]:
-        price = ticket.get("price")
+        price_per_person = ticket.get("price")
+        total_price = price_per_person * 2
         departure = ticket.get("departure_at", "")[:10]
 
         text = (
             "🔥 ДЕШЁВЫЙ ПРЯМОЙ РЕЙС 🔥\n\n"
             f"{city} → Анталья\n"
-            f"Цена: {price:,} ₽\n"
+            f"Цена за 1: {price_per_person:,} ₽\n"
+            f"Цена за 2: {total_price:,} ₽\n"
             f"Дата: {departure}\n"
             "Пересадок: 0"
         ).replace(",", " ")
@@ -116,7 +120,9 @@ def search_city(origin, city, price_limit):
 
         print(
             f"Найден билет: {city} → Анталья | "
-            f"{price} ₽ | {departure} | прямой"
+            f"{price_per_person} ₽ за 1 | "
+            f"{total_price} ₽ за 2 | "
+            f"{departure} | прямой"
         )
 
 
@@ -125,7 +131,8 @@ def search_flights():
         search_city(
             origin,
             settings["city"],
-            settings["price_limit"],
+            settings["price_limit_per_person"],
+            settings["price_limit_for_two"],
         )
 
 
